@@ -1,4 +1,4 @@
-package boot;
+package boot.bean;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

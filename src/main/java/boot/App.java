@@ -6,6 +6,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import boot.bean.ForeignKeyCleaner;
+
 @RestController
 @SpringBootApplication
 public class App {
@@ -19,5 +21,4 @@ public class App {
 		ConfigurableApplicationContext context = SpringApplication.run(App.class, args);
 		context.getBean(ForeignKeyCleaner.class).clean();
 	}
-
 }
