@@ -2,13 +2,13 @@ package boot.controller;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,7 +31,7 @@ public class AccountController {
 	@Autowired
 	private EntityManager em;
 
-	@RequestMapping(value = "", method = RequestMethod.GET)
+	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String list() {
 		Iterable<boot.model.Account> ret = repo.findAll();
 		return JSON.stringify(ret);
@@ -43,8 +43,14 @@ public class AccountController {
 		account = repo.save(account);
 		return JSON.stringify(account);
 	}
-	
-	public void criteria(){
+
+	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void deleteAccount(@PathVariable long id) {
+		repo.delete(id);
+		return;
+	}
+
+	public void criteria() {
 		CriteriaQuery<Order> c = em.getCriteriaBuilder().createQuery(Order.class);
 		Root<Order> root = c.from(Order.class);
 		root.fetch("a").fetch("b");
