@@ -38,8 +38,11 @@ public class AccountController {
 	}
 
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String addAccount(@RequestBody String json) {
+	public String addAccount(@RequestBody String json) throws Exception {
 		Account account = JSON.parse(json, Account.class);
+		if(account == null){
+			throw new Exception("Parse Json Fail");
+		}
 		account = repo.save(account);
 		return JSON.stringify(account);
 	}
@@ -50,6 +53,7 @@ public class AccountController {
 		return;
 	}
 
+	@SuppressWarnings("unused")
 	public void criteria() {
 		CriteriaQuery<Order> c = em.getCriteriaBuilder().createQuery(Order.class);
 		Root<Order> root = c.from(Order.class);
