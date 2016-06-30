@@ -14,18 +14,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import boot.bean.JsonUtil;
 import boot.model.Account;
 import boot.model.Order;
 import boot.repo.AccountRepo;
+import kit.JSON;
 
 @RestController
 @Transactional
 @RequestMapping("/account")
 public class AccountController {
 
-	@Autowired
-	private JsonUtil JSON;
 	@Autowired
 	private AccountRepo repo;
 	@Autowired
@@ -40,7 +38,7 @@ public class AccountController {
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String addAccount(@RequestBody String json) throws Exception {
 		Account account = JSON.parse(json, Account.class);
-		if(account == null){
+		if (account == null) {
 			throw new Exception("Parse Json Fail");
 		}
 		account = repo.save(account);
