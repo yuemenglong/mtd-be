@@ -1,9 +1,6 @@
 package boot.controller;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -20,24 +17,21 @@ import org.springframework.web.bind.annotation.RestController;
 import boot.model.Account;
 import boot.model.Order;
 import boot.repo.AccountRepo;
-import boot.repo.OrderRepo;
 import kit.JSON;
 
 @RestController
 @Transactional
-@RequestMapping("/account")
-public class AccountController {
+@RequestMapping("/order")
+public class OrderController {
 
 	@Autowired
-	private AccountRepo accountRepo;
-	@Autowired
-	private OrderRepo orderRepo;
+	private AccountRepo repo;
 	@Autowired
 	private EntityManager em;
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String list() {
-		Iterable<boot.model.Account> ret = accountRepo.findAll();
+		Iterable<boot.model.Account> ret = repo.findAll();
 		return JSON.stringify(ret);
 	}
 
@@ -47,34 +41,14 @@ public class AccountController {
 		if (account == null || account.getName() == null || account.getName().length() == 0) {
 			throw new Exception("Invalid Account Json");
 		}
-		account = accountRepo.save(account);
+		account = repo.save(account);
 		return JSON.stringify(account);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public void deleteAccount(@PathVariable long id) {
-		accountRepo.delete(id);
+		repo.delete(id);
 		return;
-	}
-
-	@RequestMapping(value = "/{id}/order", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String listOrder(@PathVariable long id) {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
-		CriteriaQuery<Order> query = cb.createQuery(Order.class);
-		Root<Order> root = query.from(Order.class);
-		Predicate cond = cb.equal(root.get("account").get("id"), id);
-		query.where(cond);
-		List<Order> result = em.createQuery(query).getResultList();
-		return JSON.stringify(result);
-	}
-
-	@RequestMapping(value = "/{id}/order", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String sendOrder(@PathVariable long id, @RequestBody String json) {
-		Order order = JSON.parse(json, Order.class);
-		order.setAccount(new Account());
-		order.getAccount().setId(id);
-		order = orderRepo.save(order);
-		return JSON.stringify(order);
 	}
 
 	@SuppressWarnings("unused")

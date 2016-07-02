@@ -2,6 +2,7 @@ package kit;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import flexjson.JSONSerializer;
@@ -17,9 +18,10 @@ public class JSON {
 	public static <T> T parse(String json, Class<T> clazz) {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
+			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			return mapper.readValue(json, clazz);
 		} catch (Exception e) {
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 }

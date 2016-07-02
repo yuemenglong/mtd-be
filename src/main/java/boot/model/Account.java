@@ -3,6 +3,7 @@ package boot.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,9 +18,10 @@ public class Account {
 
 	@OneToMany(mappedBy = "account")
 	private List<Order> orders = new ArrayList<Order>();
-	
+
+	@Column(unique = true)
 	private String name;
-	
+
 	private double balance;
 
 	public long getId() {

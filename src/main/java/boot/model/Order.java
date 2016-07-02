@@ -8,6 +8,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity(name = "orders")
 public class Order {
 	@Id
@@ -17,12 +19,17 @@ public class Order {
 	@ManyToOne
 	private Account account;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date openTime;
 
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date closeTime;
 
+	private String type;
+	
 	private double price;
 
 	private double openPrice;
@@ -131,6 +138,14 @@ public class Order {
 
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 
 }
