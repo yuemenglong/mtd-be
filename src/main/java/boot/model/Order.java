@@ -30,6 +30,8 @@ public class Order {
 
 	private String type;
 	
+	private String status;
+	
 	private double price;
 
 	private double openPrice;
@@ -146,6 +148,14 @@ public class Order {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 
 }

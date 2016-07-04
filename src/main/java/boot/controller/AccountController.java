@@ -9,6 +9,8 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import kit.JSON;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,7 +23,6 @@ import boot.model.Account;
 import boot.model.Order;
 import boot.repo.AccountRepo;
 import boot.repo.OrderRepo;
-import kit.JSON;
 
 @RestController
 @Transactional
@@ -75,6 +76,28 @@ public class AccountController {
 		order.getAccount().setId(id);
 		order = orderRepo.save(order);
 		return JSON.stringify(order);
+	}
+
+	@RequestMapping(value = "/{id}/order/{orderId}", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String updateOrder(@PathVariable long id, @PathVariable long orderId, @RequestBody String json) {
+		Order order = JSON.parse(json, Order.class);
+		order = orderRepo.save(order);
+		return JSON.stringify(order);
+	}
+
+	@RequestMapping(value = "/{id}/order", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public String updateOrders(@PathVariable long id, @RequestBody String json) {
+		Order[] orders = JSON.parse(json, Order[].class);
+		for (Order order : orders) {
+			order = orderRepo.save(order);
+		}
+		return JSON.stringify(orders);
+	}
+
+	@RequestMapping(value = "/{id}/order/{orderId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public void deleteOrder(@PathVariable long id, @PathVariable long orderId) {
+		orderRepo.delete(orderId);
+		return;
 	}
 
 	@SuppressWarnings("unused")
