@@ -82,15 +82,31 @@ public class AccountController {
 	public String updateOrder(@PathVariable long id, @PathVariable long orderId, @RequestBody String json) {
 		Order order = JSON.parse(json, Order.class);
 		order = orderRepo.save(order);
+		if(order.getStatus().equals("CLOSE")){
+			Account account = order.getAccount();
+			double balance = account.getBalance() + order.getProfit();
+			account.setBalance(balance);
+			accountRepo.save(account);
+		}
 		return JSON.stringify(order);
 	}
 
 	@RequestMapping(value = "/{id}/order", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
 	public String updateOrders(@PathVariable long id, @RequestBody String json) {
 		Order[] orders = JSON.parse(json, Order[].class);
+		Account account = null;
+		double balance = 0;
 		for (Order order : orders) {
 			order = orderRepo.save(order);
+			if(account == null){
+				account = order.getAccount();
+				balance = account.getBalance();
+			}
+			balance += order.getProfit();
 		}
+		account.setBalance(balance);
+		accountRepo.save(account);
+		orders[0].setAccount(account);
 		return JSON.stringify(orders);
 	}
 
