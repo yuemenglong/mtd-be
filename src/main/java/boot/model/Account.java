@@ -1,7 +1,8 @@
 package boot.model;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,7 @@ public class Account {
 	private long id;
 
 	@OneToMany(mappedBy = "account")
-	private List<Order> orders = new ArrayList<Order>();
+	private Set<Order> orders = new HashSet<Order>();
 
 	@Column(unique = true)
 	private String name;
@@ -32,7 +33,7 @@ public class Account {
 		this.id = id;
 	}
 
-	public List<Order> getOrders() {
+	public Set<Order> getOrders() {
 		return orders;
 	}
 

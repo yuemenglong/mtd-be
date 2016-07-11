@@ -3,6 +3,7 @@ package boot.controller;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -25,7 +26,6 @@ import boot.repo.AccountRepo;
 import boot.repo.OrderRepo;
 
 @RestController
-@Transactional
 @RequestMapping("/account")
 public class AccountController {
 
@@ -33,7 +33,7 @@ public class AccountController {
 	private AccountRepo accountRepo;
 	@Autowired
 	private OrderRepo orderRepo;
-	@Autowired
+	@PersistenceContext
 	private EntityManager em;
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -82,7 +82,7 @@ public class AccountController {
 	public String updateOrder(@PathVariable long id, @PathVariable long orderId, @RequestBody String json) {
 		Order order = JSON.parse(json, Order.class);
 		order = orderRepo.save(order);
-		if(order.getStatus().equals("CLOSE")){
+		if (order.getStatus().equals("CLOSE")) {
 			Account account = order.getAccount();
 			double balance = account.getBalance() + order.getProfit();
 			account.setBalance(balance);
@@ -98,7 +98,7 @@ public class AccountController {
 		double balance = 0;
 		for (Order order : orders) {
 			order = orderRepo.save(order);
-			if(account == null){
+			if (account == null) {
 				account = order.getAccount();
 				balance = account.getBalance();
 			}
@@ -110,10 +110,16 @@ public class AccountController {
 		return JSON.stringify(orders);
 	}
 
+	@Transactional
 	@RequestMapping(value = "/{id}/order/{orderId}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public void deleteOrder(@PathVariable long id, @PathVariable long orderId) {
+	public String deleteOrder(@PathVariable long id, @PathVariable long orderId) {
+		Order order = orderRepo.findOne(orderId);
+		double balance = order.getAccount().getBalance();
+		balance -= order.getProfit();
+		order.getAccount().setBalance(balance);
+		accountRepo.save(order.getAccount());
 		orderRepo.delete(orderId);
-		return;
+		return JSON.stringify(order.getAccount());
 	}
 
 	@SuppressWarnings("unused")

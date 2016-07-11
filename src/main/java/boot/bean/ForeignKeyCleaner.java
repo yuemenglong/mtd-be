@@ -7,20 +7,20 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@Transactional
 public class ForeignKeyCleaner {
 
-	@Autowired
+	@PersistenceContext
 	EntityManager em;
-
+	
+	@Transactional
 	public void clean() {
 		Session session = em.unwrap(Session.class);
 		session.doWork(new Work() {
