@@ -17,7 +17,7 @@ public class Account {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 
-	@OneToMany(mappedBy = "account")
+	@OneToMany(mappedBy = "account", orphanRemoval = true)
 	private Set<Order> orders = new HashSet<Order>();
 
 	@Column(unique = true)
