@@ -1,6 +1,7 @@
 package boot.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -34,19 +35,30 @@ public class BarController {
 	private EntityManager em;
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String list(@DateTimeFormat(pattern = "yyyy-MM-dd") Date from, Integer limit) {
+	public String list(@DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
+			@DateTimeFormat(pattern = "yyyy-MM-dd") Date to, Integer limit) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Bar> query = cb.createQuery(Bar.class);
 		Root<Bar> root = query.from(Bar.class);
 		ArrayList<Predicate> ps = new ArrayList<Predicate>();
+		query.orderBy(cb.asc(root.get("datetime")));
 		if (from != null) {
 			ps.add(cb.greaterThanOrEqualTo(root.get("datetime"), from));
 		}
-		if(limit == null){
+		if (to != null) {
+			ps.add(cb.lessThanOrEqualTo(root.get("datetime"), to));
+			query.orderBy(cb.desc(root.get("datetime")));
+		}
+		if (limit == null) {
 			limit = 450;
 		}
-		query.orderBy(cb.asc(root.get("datetime")));
+		Predicate[] cond = ps.toArray(new Predicate[0]);
+		query.where(cond);
+
 		List<Bar> list = em.createQuery(query).setMaxResults(limit).getResultList();
+		if (to != null) {
+			Collections.reverse(list);
+		}
 		return JSON.stringify(list);
 	}
 
