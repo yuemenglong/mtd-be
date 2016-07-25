@@ -35,8 +35,8 @@ public class BarController {
 	private EntityManager em;
 
 	@RequestMapping(value = "", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public String list(@DateTimeFormat(pattern = "yyyy-MM-dd") Date from,
-			@DateTimeFormat(pattern = "yyyy-MM-dd") Date to, Integer limit) {
+	public String list(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date from,
+			@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date to, Integer limit) {
 		CriteriaBuilder cb = em.getCriteriaBuilder();
 		CriteriaQuery<Bar> query = cb.createQuery(Bar.class);
 		Root<Bar> root = query.from(Bar.class);
